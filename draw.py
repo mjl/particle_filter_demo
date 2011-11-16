@@ -8,9 +8,9 @@
 
 import turtle
 import random
-import math
 
 turtle.tracer(50000, delay=0)
+turtle.register_shape("dot", ((-3,-3), (-3,3), (3,3), (3,-3)))
 
 class Maze(object):
     def __init__(self, maze):
@@ -66,15 +66,17 @@ class Maze(object):
 
     def show_particles(self, particles):
         turtle.clearstamps()
+        turtle.shape('dot')
+
         for p in particles:
             turtle.setposition(*p.xy)
             turtle.setheading(p.h)
             turtle.color(self.weight_to_color(p.w))
             turtle.stamp()
-        turtle.update()
 
     def show_robot(self, robot):
         turtle.color("green")
+        turtle.shape('turtle')
         turtle.setposition(*robot.xy)
         turtle.setheading(robot.h)
         turtle.stamp()
@@ -90,7 +92,7 @@ class Maze(object):
     def distance_to_nearest_beacon(self, x, y):
         d = 99999
         for c_x, c_y in self.beacons:
-            distance = math.sqrt((c_x - x) ** 2 + (c_y - y) ** 2)
+            distance = ((c_x - x) ** 2 + (c_y - y) ** 2)
             if distance < d:
                 d = distance
                 d_x, d_y = c_x, c_y
