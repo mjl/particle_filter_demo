@@ -30,7 +30,7 @@ maze_data = ( ( 1, 1, 0, 0, 1, 2, 0, 0, 0, 0 ),
               ( 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 ),
               ( 0, 0, 0, 0, 2, 1, 0, 0, 1, 0 ))
 
-PARTICLE_COUNT = 4000    # Total number of particles
+PARTICLE_COUNT = 2000    # Total number of particles
 N = 500                  # Number of particles shuffled per iteration
 
 # Algorithm variants:
@@ -148,7 +148,7 @@ while True:
             p_d = p.read_sensor(m)
             # This is just a gaussian I pulled out of my hat, near to
             # robbie's measurement => 1, further away => 0
-            g = math.e ** -((r_d - p_d)**2 * 19)
+            g = math.e ** -((r_d - p_d)**2 * 7)
             p.w = g
         else:
             p.w = 0
