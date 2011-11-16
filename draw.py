@@ -8,8 +8,9 @@
 
 import turtle
 import random
+import math
 
-turtle.tracer(5000, delay=0)
+turtle.tracer(50000, delay=0)
 
 class Maze(object):
     def __init__(self, maze):
@@ -25,7 +26,8 @@ class Maze(object):
                 if block:
                     nb_y = self.height - y - 1
                     self.blocks.append((x, nb_y))
-                    self.beacons.extend(((x, nb_y), (x+1, nb_y), (x, nb_y+1), (x+1, nb_y+1)))
+                    if block == 2:
+                        self.beacons.extend(((x, nb_y), (x+1, nb_y), (x, nb_y+1), (x+1, nb_y+1)))
 
     def draw(self):
         for x, y in self.blocks:
@@ -85,10 +87,10 @@ class Maze(object):
             if self.is_free(x, y):
                 return x, y
 
-    def distance_to_nearest_corner(self, x, y):
+    def distance_to_nearest_beacon(self, x, y):
         d = 99999
         for c_x, c_y in self.beacons:
-            distance = (c_x - x) ** 2 + (c_y - y) ** 2
+            distance = math.sqrt((c_x - x) ** 2 + (c_y - y) ** 2)
             if distance < d:
                 d = distance
                 d_x, d_y = c_x, c_y

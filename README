@@ -3,9 +3,9 @@ Stanford's Intro to AI lectures.
 
   A robot is placed in a maze. It has no idea where it is, and
 its only sensor can measure the approximate distance to the nearest
-obstacle beacon (yes, I know it's totally weird, but it's easy to
-implement). Also, it shows that even very simple sensors can be used,
-no need for a high resolution laser scanner.
+beacon (yes, I know it's totally weird, but it's easy to implement).
+Also, it shows that even very simple sensors can be used, no need
+for a high resolution laser scanner.
 
   In the arena display the robot is represented by a small upward
 pointing green arrow and its beliefs are downward pointing red/blue
