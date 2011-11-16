@@ -88,8 +88,10 @@ class Particle(object):
 class Robot(Particle):
     def __init__(self, maze):
         super(Robot, self).__init__(*maze.random_free_place(), heading=90)
-        # Random initial direction
-        self.dx, self.dy = add_some_noise(0, 0)
+        self.chose_random_direction()
+
+    def chose_random_direction(self):
+        self.dx, self.dy = add_noise(0.1, 0, 0)
 
     def read_sensor(self, maze):
         """
@@ -104,12 +106,12 @@ class Robot(Particle):
         Move the robot. Note that the movement is stochastic too.
         """
         while True:
-            xx, yy = add_noise(0.01, self.x + self.dx, self.y + self.dy)
+            xx, yy = add_noise(0.02, self.x + self.dx, self.y + self.dy)
             if maze.is_free(xx, yy):
                 self.x, self.y = xx, yy
                 break
             # Bumped into something, chose random new direction
-            self.dx, self.dy = add_some_noise(0, 0)
+            self.chose_random_direction()
 
 # ------------------------------------------------------------------------
 
@@ -149,13 +151,15 @@ while True:
     # ---------- Shuffle particles ----------
 
     # Remove all particles that cannot be right (out of arena, inside
-    # obstacle)
+    # obstacle). Remember how many were removed so we can add that
+    # number in the picking phase below
     particles = [p for p in particles if m.is_free(*p.xy)]
+    delta_p = PARTICLE_COUNT - len(particles)
 
     # Pick N particles according to weight, duplicate them and add
     # some noise to their position
     new_particles = []
-    for cnt in range(0, N):
+    for cnt in range(0, N + delta_p):
         p = weightedPick(particles)
         new_particles.append(Particle(p.x, p.y))
 
@@ -171,8 +175,3 @@ while True:
     # remove N old particles, kill off those with least weight
     particles = sorted(particles, key=lambda p: p.w)[N:]
     particles += new_particles
-
-    # Add random new ones so the overall count fits, we might have
-    # eliminated some while moving
-    if len(particles) < PARTICLE_COUNT:
-        particles += Particle.create_random(PARTICLE_COUNT - len(particles), m)
