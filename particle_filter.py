@@ -159,9 +159,13 @@ while True:
     # Pick N particles according to weight, duplicate them and add
     # some noise to their position
     new_particles = []
-    for cnt in range(0, N + delta_p):
+    for cnt in range(0, N):
         p = weightedPick(particles)
         new_particles.append(Particle(p.x, p.y))
+
+    # Add random new ones so the overall count fits, we might have
+    # eliminated some while moving
+    new_particles += Particle.create_random(delta_p, m)
 
     # Add some random noise
     for p in new_particles:
