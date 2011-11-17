@@ -82,17 +82,25 @@ class Maze(object):
         turtle.stamp()
         turtle.update()
 
+    def random_place(self):
+        x = random.uniform(0, self.width)
+        y = random.uniform(0, self.height)
+        return x, y
+
     def random_free_place(self):
         while True:
-            x = random.random() * self.width
-            y = random.random() * self.height
+            x, y = self.random_place()
             if self.is_free(x, y):
                 return x, y
+
+    def distance(self, x1, y1, x2, y2):
+        # No need for sqrt, we just compare
+        return ((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
     def distance_to_nearest_beacon(self, x, y):
         d = 99999
         for c_x, c_y in self.beacons:
-            distance = ((c_x - x) ** 2 + (c_y - y) ** 2)
+            distance = self.distance(c_x, c_y, x, y)
             if distance < d:
                 d = distance
                 d_x, d_y = c_x, c_y
