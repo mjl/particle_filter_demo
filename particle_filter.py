@@ -125,31 +125,31 @@ class Robot(Particle):
 
 # ------------------------------------------------------------------------
 
-m = Maze(maze_data)
-m.draw()
+world = Maze(maze_data)
+world.draw()
 
-particles = Particle.create_random(PARTICLE_COUNT, m)
-robbie = Robot(m)
+particles = Particle.create_random(PARTICLE_COUNT, world)
+robbie = Robot(world)
 
 while True:
     # Read robbie's sensor
-    r_d = robbie.read_sensor(m)
+    r_d = robbie.read_sensor(world)
 
     # Update particle weight according to how good every particle matches
     # robbie's sensor reading
     for p in particles:
-        if m.is_free(*p.xy):
-            p_d = p.read_sensor(m)
+        if world.is_free(*p.xy):
+            p_d = p.read_sensor(world)
             p.w = w_gauss(r_d, p_d)
         else:
             p.w = 0
 
     # Time for some action!
-    m.show_particles(particles)
-    m.show_robot(robbie)
+    world.show_particles(particles)
+    world.show_robot(robbie)
 
     # I'm doing the movement first, it makes life easier
-    robbie.move(m)
+    robbie.move(world)
 
     # Move particles according to my belief of movement (this may
     # be different than the real movement, but it's all I got)
@@ -170,7 +170,7 @@ while True:
     for _ in particles:
         p = weightedPick(particles)
         if p is None:
-            p = Particle(*m.random_place(), noisy=True)
+            p = Particle(*world.random_place(), noisy=True)
         new_particles.append(Particle(p.x, p.y, noisy=True))
 
     particles = new_particles
