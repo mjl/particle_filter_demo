@@ -30,7 +30,7 @@ maze_data = ( ( 1, 1, 0, 0, 1, 2, 0, 0, 0, 0 ),
               ( 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 ),
               ( 0, 0, 0, 0, 2, 1, 0, 0, 1, 0 ))
 
-PARTICLE_COUNT = 100    # Total number of particles
+PARTICLE_COUNT = 1500    # Total number of particles
 
 # ------------------------------------------------------------------------
 # Some utility functions
@@ -57,7 +57,7 @@ def weightedPick(particles):
 def w_gauss(a, b):
     # This is just a gaussian I pulled out of my hat, near to
     # robbie's measurement => 1, further away => 0
-    g = math.e ** -((a - b)**2 * 7)
+    g = math.e ** -((a - b)**2 * 5)
     return g
 
 # ------------------------------------------------------------------------
@@ -83,7 +83,7 @@ class Particle(object):
 
     @classmethod
     def create_random(cls, count, maze):
-        return [cls(*maze.random_place(), w=1.0 / count) for _ in range(0, count)]
+        return [cls(*maze.random_free_place(), w=1.0 / count) for _ in range(0, count)]
 
     def read_sensor(self, maze):
         """
@@ -144,21 +144,11 @@ while True:
         else:
             p.w = 0
 
-    # Time for some action!
+    # ---------- Show current state ----------
     world.show_particles(particles)
     world.show_robot(robbie)
 
-    # I'm doing the movement first, it makes life easier
-    robbie.move(world)
-
-    # Move particles according to my belief of movement (this may
-    # be different than the real movement, but it's all I got)
-    for p in particles:
-        p.x += robbie.dx
-        p.y += robbie.dy
-
     # ---------- Shuffle particles ----------
-
     new_particles = []
 
     # Normalise weights
@@ -174,3 +164,12 @@ while True:
         new_particles.append(Particle(p.x, p.y, noisy=True))
 
     particles = new_particles
+
+    # ---------- Move things ----------
+    robbie.move(world)
+
+    # Move particles according to my belief of movement (this may
+    # be different than the real movement, but it's all I got)
+    for p in particles:
+        p.x += robbie.dx
+        p.y += robbie.dy
