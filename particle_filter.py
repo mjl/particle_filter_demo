@@ -30,22 +30,7 @@ maze_data = ( ( 1, 1, 0, 0, 1, 2, 0, 0, 0, 0 ),
               ( 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 ),
               ( 0, 0, 0, 0, 2, 1, 0, 0, 1, 0 ))
 
-PARTICLE_COUNT = 2000    # Total number of particles
-N = 500                  # Number of particles shuffled per iteration
-
-# Algorithm variants:
-# 1 is the particle filter that just relies on particle weights
-# to distribute them. It sometimes seems to paint itself into a
-# corner when its hypothesis is wrong -- all particles get drawn
-# to that wrong location and there aren't any left around the real
-# position, so there is little chance of ever correcting that.
-# One needs a large amount of particles to counter that (try 2000+).
-# 2 is a variant that kills off impossible particles and replaces
-# them with fresh, randomly distributed particles. This seems to
-# be much more resilient because it re-seeds the hypothesis space
-# every now and then. It works better with less particles (400 is
-# fine).
-ALGO = 1
+PARTICLE_COUNT = 100    # Total number of particles
 
 # ------------------------------------------------------------------------
 # Some utility functions
@@ -59,18 +44,27 @@ def add_little_noise(*coords):
 def add_some_noise(*coords):
     return add_noise(0.1, *coords)
 
-def weightedPick(particles, nu):
-    r = random.uniform(0, nu)
+def weightedPick(particles):
+    r = random.uniform(0, 1)
     s = 0.0
     for p in particles:
-        s += p.w
-        if r < s:
-            return p
+        if p.w > 0:
+            s += p.w
+            if r < s:
+                return p
     return p
+
+def w_gauss(a, b):
+    # This is just a gaussian I pulled out of my hat, near to
+    # robbie's measurement => 1, further away => 0
+    g = math.e ** -((a - b)**2 * 7)
+    return g
 
 # ------------------------------------------------------------------------
 class Particle(object):
-    def __init__(self, x, y, heading=270, w=1):
+    def __init__(self, x, y, heading=270, w=1, noisy=False):
+        if noisy:
+            x, y = add_some_noise(x, y)
         self.x = x
         self.y = y
         self.h = heading
@@ -89,7 +83,7 @@ class Particle(object):
 
     @classmethod
     def create_random(cls, count, maze):
-        return [cls(*maze.random_free_place(), w=1.0 / count) for _ in range(0, count)]
+        return [cls(*maze.random_place(), w=1.0 / count) for _ in range(0, count)]
 
     def read_sensor(self, maze):
         """
@@ -146,10 +140,7 @@ while True:
     for p in particles:
         if m.is_free(*p.xy):
             p_d = p.read_sensor(m)
-            # This is just a gaussian I pulled out of my hat, near to
-            # robbie's measurement => 1, further away => 0
-            g = math.e ** -((r_d - p_d)**2 * 7)
-            p.w = g
+            p.w = w_gauss(r_d, p_d)
         else:
             p.w = 0
 
@@ -158,7 +149,6 @@ while True:
     m.show_robot(robbie)
 
     # I'm doing the movement first, it makes life easier
-
     robbie.move(m)
 
     # Move particles according to my belief of movement (this may
@@ -171,24 +161,16 @@ while True:
 
     new_particles = []
 
-    # Remove all particles that cannot be right (out of arena, inside
-    # obstacle), then add random new ones so the overall count fits
-    if ALGO == 2:
-        particles = [p for p in particles if p.w > 0]
-        new_particles += Particle.create_random(PARTICLE_COUNT - len(particles), m)
-
-    # Pick N particles according to weight, duplicate them and add
-    # some noise to their position
+    # Normalise weights
     nu = sum(p.w for p in particles)
-    for cnt in range(0, N):
-        p = weightedPick(particles, nu)
-        new_particles.append(Particle(p.x, p.y))
+    if nu:
+        for p in particles:
+            p.w = p.w / nu
 
-    # Add some random noise
-    for p in new_particles:
-        p.x, p.y = add_some_noise(p.x, p.y)
+    for _ in particles:
+        p = weightedPick(particles)
+        if p is None:
+            p = Particle(*m.random_place(), noisy=True)
+        new_particles.append(Particle(p.x, p.y, noisy=True))
 
-    # Ensure we have PARTICLE_COUNT particles, kill off those with
-    # the least weight first
-    particles += new_particles
-    particles = sorted(particles, key=lambda p: p.w, reverse=True)[0:PARTICLE_COUNT]
+    particles = new_particles
