@@ -11,6 +11,8 @@ import random
 
 turtle.tracer(50000, delay=0)
 turtle.register_shape("dot", ((-3,-3), (-3,3), (3,3), (3,-3)))
+turtle.speed(0)
+turtle.title("Poor robbie is lost")
 
 class Maze(object):
     def __init__(self, maze):
