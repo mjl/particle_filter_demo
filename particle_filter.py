@@ -54,10 +54,13 @@ def weightedPick(particles):
                 return p
     return p
 
+StdDev = 1.4
+
 def w_gauss(a, b):
     # This is just a gaussian I pulled out of my hat, near to
     # robbie's measurement => 1, further away => 0
-    g = math.e ** -((a - b)**2 * 5)
+    error = a - b
+    g = math.e ** -(error ** 2 / (2 * StdDev ** 2))
     return g
 
 # ------------------------------------------------------------------------
