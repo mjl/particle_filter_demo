@@ -116,7 +116,10 @@ class Robot(Particle):
         self.step_count = 0
 
     def chose_random_direction(self):
-        self.dx, self.dy = add_noise(0.1, 0, 0)
+        heading = random.uniform(0, 360)
+        dx = math.sin(math.radians(heading)) * 0.1
+        dy = math.cos(math.radians(heading)) * 0.1
+        self.dx, self.dy = dx, dy
 
     def read_sensor(self, maze):
         """
