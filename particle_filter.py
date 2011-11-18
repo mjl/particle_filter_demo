@@ -173,8 +173,36 @@ while True:
         else:
             p.w = 0
 
+    # ---------- Try to find current best estimate for display ----------
+    # (not part of the core algorithm)
+    # We just compute the mean for all particles that have a reasonably
+    # good weight.
+    m_x, m_y, m_count = 0, 0, 0
+    for p in particles:
+        if p.w > 0.6:
+            m_count += 1
+            m_x += p.x
+            m_y += p.y
+
+    if m_count > PARTICLE_COUNT / 10:
+        m_x /= m_count
+        m_y /= m_count
+
+        # Now compute how good that mean is -- check how many particles
+        # actually are in the immediate vicinity
+        m_count = 0
+        for p in particles:
+            if world.distance(p.x, p.y, m_x, m_y) < 1:
+                m_count += 1
+    else:
+        m_x = None
+
     # ---------- Show current state ----------
     world.show_particles(particles)
+
+    if m_x is not None:
+        world.show_mean(m_x, m_y, m_count > PARTICLE_COUNT * 0.8)
+
     world.show_robot(robbie)
 
     # ---------- Shuffle particles ----------

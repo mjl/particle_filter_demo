@@ -66,6 +66,15 @@ class Maze(object):
         xx = int(x)
         return self.maze[yy][xx] == 0
 
+    def show_mean(self, x, y, confident=False):
+        if confident:
+            turtle.color("#00AA00")
+        else:
+            turtle.color("#cccccc")
+        turtle.setposition(x, y)
+        turtle.shape("circle")
+        turtle.stamp()
+
     def show_particles(self, particles):
         turtle.clearstamps()
         turtle.shape('dot')

@@ -10,7 +10,11 @@ for a high resolution laser scanner.
   In the arena display the robot is represented by a small green
 turtle and its beliefs are red/blue dots. The more a belief matches
 the current sensor reading, the more the belief's colour changes to
-red. Beacons are little cyan dots.
+red. Beacons are little cyan dots. For illustration purposes, we
+also compute the mean of all reasonably confident particles, then
+check whether that point is actually a center of a cluster. This
+point is represented by a gray circle, which becomes green when the
+algorithm thinks it actually determined the robot's position.
 
   The robot then starts to randomly move around the maze. As it
 moves, its beliefs are updated using the particle filter algorithm.
