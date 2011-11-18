@@ -14,11 +14,19 @@ import bisect
 
 from draw import Maze
 
+"""
+# Smaller maze
+
 maze_data = ( ( 2, 0, 1, 0, 0 ),
               ( 0, 0, 0, 0, 1 ),
               ( 1, 1, 1, 0, 0 ),
               ( 1, 0, 0, 0, 0 ),
               ( 0, 0, 2, 0, 1 ))
+"""
+
+# 0 - empty square
+# 1 - occupied square
+# 2 - occupied square with a beacon at each corner, detectable by the robot
 
 maze_data = ( ( 1, 1, 0, 0, 1, 2, 0, 0, 0, 0 ),
               ( 1, 2, 0, 1, 1, 1, 0, 0, 0, 0 ),
@@ -148,6 +156,7 @@ class Robot(Particle):
 world = Maze(maze_data)
 world.draw()
 
+# initial distribution assigns each particle an equal probability
 particles = Particle.create_random(PARTICLE_COUNT, world)
 robbie = Robot(world)
 
