@@ -191,9 +191,8 @@ while True:
 
     for _ in particles:
         p = dist.pick()
-        if p is None:
-            p = Particle(*world.random_place(), noisy=True)
-        new_particles.append(Particle(p.x, p.y, noisy=True))
+        new_particle = Particle(p.x, p.y, noisy=True)
+        new_particles.append(new_particle)
 
     particles = new_particles
 
