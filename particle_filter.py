@@ -10,6 +10,7 @@ from __future__ import absolute_import
 
 import random
 import math
+import bisect
 
 from draw import Maze
 
@@ -62,6 +63,19 @@ def w_gauss(a, b):
     error = a - b
     g = math.e ** -(error ** 2 / (2 * StdDev ** 2))
     return g
+
+# ------------------------------------------------------------------------
+class WeightedDistribution(object):
+    def __init__(self, state):
+        accum = 0.0
+        self.state = state
+        self.distribution = []
+        for x in state:
+            accum += x.w
+            self.distribution.append(accum)
+
+    def pick(self):
+        return self.state[bisect.bisect_left(self.distribution, random.uniform(0, 1))]
 
 # ------------------------------------------------------------------------
 class Particle(object):
@@ -160,8 +174,11 @@ while True:
         for p in particles:
             p.w = p.w / nu
 
+    # create a weighted distribution, for fast picking
+    dist = WeightedDistribution(particles)
+
     for _ in particles:
-        p = weightedPick(particles)
+        p = dist.pick()
         if p is None:
             p = Particle(*world.random_place(), noisy=True)
         new_particles.append(Particle(p.x, p.y, noisy=True))
