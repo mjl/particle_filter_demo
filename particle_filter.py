@@ -29,15 +29,15 @@ maze_data = ( ( 2, 0, 1, 0, 0 ),
 # 2 - occupied square with a beacon at each corner, detectable by the robot
 
 maze_data = ( ( 1, 1, 0, 0, 1, 2, 0, 0, 0, 0 ),
-              ( 1, 2, 0, 1, 1, 1, 0, 0, 0, 0 ),
-              ( 0, 1, 0, 0, 0, 0, 0, 1, 0, 1 ),
+              ( 1, 2, 0, 0, 1, 1, 0, 0, 0, 0 ),
+              ( 0, 1, 1, 0, 0, 0, 0, 1, 0, 1 ),
               ( 0, 0, 0, 0, 1, 0, 0, 1, 1, 2 ),
-              ( 1, 1, 1, 1, 1, 2, 0, 0, 0, 0 ),
-              ( 1, 1, 1, 0, 1, 1, 1, 0, 0, 0 ),
+              ( 1, 1, 0, 1, 1, 2, 0, 0, 0, 0 ),
+              ( 1, 1, 1, 0, 1, 1, 1, 0, 2, 0 ),
               ( 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
-              ( 1, 2, 0, 1, 1, 0, 0, 2, 0, 0 ),
+              ( 1, 2, 0, 1, 1, 0, 1, 0, 0, 0 ),
               ( 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 ),
-              ( 0, 0, 0, 0, 2, 1, 0, 0, 1, 0 ))
+              ( 0, 0, 1, 0, 2, 1, 0, 0, 1, 0 ))
 
 PARTICLE_COUNT = 1500    # Total number of particles
 
@@ -63,7 +63,7 @@ def weightedPick(particles):
                 return p
     return p
 
-StdDev = 1.4
+StdDev = 1.3
 
 def w_gauss(a, b):
     # This is just a gaussian I pulled out of my hat, near to
@@ -118,6 +118,8 @@ class Particle(object):
 
 # ------------------------------------------------------------------------
 class Robot(Particle):
+    speed = 0.2
+
     def __init__(self, maze):
         super(Robot, self).__init__(*maze.random_free_place(), heading=90)
         self.chose_random_direction()
@@ -125,8 +127,8 @@ class Robot(Particle):
 
     def chose_random_direction(self):
         heading = random.uniform(0, 360)
-        dx = math.sin(math.radians(heading)) * 0.1
-        dy = math.cos(math.radians(heading)) * 0.1
+        dx = math.sin(math.radians(heading)) * self.speed
+        dy = math.cos(math.radians(heading)) * self.speed
         self.dx, self.dy = dx, dy
 
     def read_sensor(self, maze):
@@ -144,7 +146,7 @@ class Robot(Particle):
         while True:
             self.step_count += 1
             xx, yy = add_noise(0.02, self.x + self.dx, self.y + self.dy)
-            if maze.is_free(xx, yy) and self.step_count % 30 != 0:
+            if maze.is_free(xx, yy) and self.step_count % 70 != 0:
                 self.x, self.y = xx, yy
                 break
             # Bumped into something or too long in same direction,
