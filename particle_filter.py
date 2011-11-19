@@ -53,16 +53,6 @@ def add_little_noise(*coords):
 def add_some_noise(*coords):
     return add_noise(0.1, *coords)
 
-def weightedPick(particles):
-    r = random.uniform(0, 1)
-    s = 0.0
-    for p in particles:
-        if p.w > 0:
-            s += p.w
-            if r < s:
-                return p
-    return p
-
 StdDev = 1.3
 
 def w_gauss(a, b):
