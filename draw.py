@@ -14,6 +14,8 @@ turtle.register_shape("dot", ((-3,-3), (-3,3), (3,3), (3,-3)))
 turtle.speed(0)
 turtle.title("Poor robbie is lost")
 
+UPDATE_EVERY = 0
+
 class Maze(object):
     def __init__(self, maze):
         self.maze = maze
@@ -21,7 +23,7 @@ class Maze(object):
         self.height  = len(maze)
         turtle.setworldcoordinates(0, 0, self.width, self.height)
         self.blocks = []
-
+        self.update_cnt = 0
         self.beacons = []
         for y, line in enumerate(self.maze):
             for x, block in enumerate(line):
@@ -76,6 +78,10 @@ class Maze(object):
         turtle.stamp()
 
     def show_particles(self, particles):
+        self.update_cnt += 1
+        if UPDATE_EVERY > 0 and self.update_cnt % UPDATE_EVERY != 1:
+            return
+
         turtle.clearstamps()
         turtle.shape('dot')
 
