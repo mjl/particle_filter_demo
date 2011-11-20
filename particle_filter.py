@@ -102,7 +102,11 @@ class WeightedDistribution(object):
             self.distribution.append(accum)
 
     def pick(self):
-        return self.state[bisect.bisect_left(self.distribution, random.uniform(0, 1))]
+        try:
+            return self.state[bisect.bisect_left(self.distribution, random.uniform(0, 1))]
+        except IndexError:
+            # Happens when all particles are improbable w=0
+            return None
 
 # ------------------------------------------------------------------------
 class Particle(object):
@@ -216,6 +220,8 @@ while True:
 
     for _ in particles:
         p = dist.pick()
+        if p is None:  # No pick b/c all totally improbable
+            p = Particle.create_random(1)[0]
         new_particle = Particle(p.x, p.y, noisy=True)
         new_particles.append(new_particle)
 
