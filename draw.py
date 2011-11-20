@@ -6,6 +6,7 @@
 #
 # ------------------------------------------------------------------------
 
+import math
 import turtle
 import random
 
@@ -24,6 +25,8 @@ class Maze(object):
         turtle.setworldcoordinates(0, 0, self.width, self.height)
         self.blocks = []
         self.update_cnt = 0
+        self.one_px = float(turtle.window_width()) / float(self.width)
+
         self.beacons = []
         for y, line in enumerate(self.maze):
             for x, block in enumerate(line):
@@ -85,11 +88,19 @@ class Maze(object):
         turtle.clearstamps()
         turtle.shape('dot')
 
+        px = {}
         for p in particles:
-            turtle.setposition(*p.xy)
-            turtle.setheading(p.h)
-            turtle.color(self.weight_to_color(p.w))
-            turtle.stamp()
+            # Keep track of which positions already have something
+            # drawn to speed up display rendering
+            scaled_x = int(p.x * self.one_px)
+            scaled_y = int(p.y * self.one_px)
+            scaled_xy = scaled_x * 10000 + scaled_y
+            if not scaled_xy in px:
+                px[scaled_xy] = 1
+                turtle.setposition(*p.xy)
+                turtle.setheading(p.h)
+                turtle.color(self.weight_to_color(p.w))
+                turtle.stamp()
 
     def show_robot(self, robot):
         turtle.color("green")
