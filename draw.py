@@ -122,8 +122,7 @@ class Maze(object):
                 return x, y
 
     def distance(self, x1, y1, x2, y2):
-        # No need for sqrt, we just compare
-        return ((x1 - x2) ** 2 + (y1 - y2) ** 2)
+        return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
     def distance_to_nearest_beacon(self, x, y):
         d = 99999
