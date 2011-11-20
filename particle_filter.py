@@ -71,10 +71,9 @@ def compute_mean_point(particles):
 
     m_x, m_y, m_count = 0, 0, 0
     for p in particles:
-        if p.w > 0.7:
-            m_count += p.w
-            m_x += p.x * p.w
-            m_y += p.y * p.w
+        m_count += p.w
+        m_x += p.x * p.w
+        m_y += p.y * p.w
 
     if m_count == 0:
         return -1, -1, False
