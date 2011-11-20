@@ -55,7 +55,7 @@ def add_some_noise(*coords):
 
 # This is just a gaussian kernel I pulled out of my hat, to transfor
 # values near to robbie's measurement => 1, further away => 0
-sigma2 = 1 ** 2
+sigma2 = 0.9 ** 2
 def w_gauss(a, b):
     error = a - b
     g = math.e ** -(error ** 2 / (2 * sigma2))
