@@ -25,7 +25,7 @@ class Maze(object):
         turtle.setworldcoordinates(0, 0, self.width, self.height)
         self.blocks = []
         self.update_cnt = 0
-        self.one_px = float(turtle.window_width()) / float(self.width)
+        self.one_px = float(turtle.window_width()) / float(self.width) / 2
 
         self.beacons = []
         for y, line in enumerate(self.maze):
