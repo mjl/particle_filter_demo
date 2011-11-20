@@ -131,13 +131,17 @@ class Particle(object):
 
     @classmethod
     def create_random(cls, count, maze):
-        return [cls(*maze.random_free_place(), w=1.0 / count) for _ in range(0, count)]
+        return [cls(*maze.random_free_place()) for _ in range(0, count)]
 
     def read_sensor(self, maze):
         """
         Find distance to nearest beacon.
         """
         return maze.distance_to_nearest_beacon(*self.xy)
+
+    def move_by(self, x, y):
+        self.x += x
+        self.y += y
 
 # ------------------------------------------------------------------------
 class Robot(Particle):
@@ -234,5 +238,4 @@ while True:
     # Move particles according to my belief of movement (this may
     # be different than the real movement, but it's all I got)
     for p in particles:
-        p.x += robbie.dx
-        p.y += robbie.dy
+        p.move_by(robbie.dx, robbie.dy)
