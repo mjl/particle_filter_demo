@@ -39,7 +39,7 @@ maze_data = ( ( 1, 1, 0, 0, 1, 2, 0, 0, 0, 0 ),
               ( 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 ),
               ( 0, 0, 1, 0, 2, 1, 0, 0, 1, 0 ))
 
-PARTICLE_COUNT = 1500    # Total number of particles
+PARTICLE_COUNT = 2000    # Total number of particles
 
 # ------------------------------------------------------------------------
 # Some utility functions
@@ -53,13 +53,12 @@ def add_little_noise(*coords):
 def add_some_noise(*coords):
     return add_noise(0.1, *coords)
 
-StdDev = 1.3
-
+# This is just a gaussian kernel I pulled out of my hat, to transfor
+# values near to robbie's measurement => 1, further away => 0
+sigma2 = 1 ** 2
 def w_gauss(a, b):
-    # This is just a gaussian I pulled out of my hat, near to
-    # robbie's measurement => 1, further away => 0
     error = a - b
-    g = math.e ** -(error ** 2 / (2 * StdDev ** 2))
+    g = math.e ** -(error ** 2 / (2 * sigma2))
     return g
 
 # ------------------------------------------------------------------------
