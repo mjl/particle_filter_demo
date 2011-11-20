@@ -150,6 +150,7 @@ class Robot(Particle):
 
     def chose_random_direction(self):
         heading = random.uniform(0, 360)
+        self.h = 90 - heading
         dx = math.sin(math.radians(heading)) * self.speed
         dy = math.cos(math.radians(heading)) * self.speed
         self.dx, self.dy = dx, dy
