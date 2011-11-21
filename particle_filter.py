@@ -109,9 +109,12 @@ class WeightedDistribution(object):
 
 # ------------------------------------------------------------------------
 class Particle(object):
-    def __init__(self, x, y, heading=270, w=1, noisy=False):
+    def __init__(self, x, y, heading=None, w=1, noisy=False):
+        if heading is None:
+            heading = random.uniform(0, 360)
         if noisy:
-            x, y = add_some_noise(x, y)
+            x, y, heading = add_some_noise(x, y, heading)
+
         self.x = x
         self.y = y
         self.h = heading
@@ -138,6 +141,15 @@ class Particle(object):
         """
         return maze.distance_to_nearest_beacon(*self.xy)
 
+    def advance_by(self, speed, checker=None):
+        r = math.radians(self.h)
+        dx = math.sin(r) * speed
+        dy = math.cos(r) * speed
+        if checker is None or checker(self, dx, dy):
+            self.move_by(dx, dy)
+            return True
+        return False
+
     def move_by(self, x, y):
         self.x += x
         self.y += y
@@ -153,10 +165,7 @@ class Robot(Particle):
 
     def chose_random_direction(self):
         heading = random.uniform(0, 360)
-        self.h = 90 - heading
-        dx = math.sin(math.radians(heading)) * self.speed
-        dy = math.cos(math.radians(heading)) * self.speed
-        self.dx, self.dy = dx, dy
+        self.h = heading
 
     def read_sensor(self, maze):
         """
@@ -172,9 +181,8 @@ class Robot(Particle):
         """
         while True:
             self.step_count += 1
-            xx, yy = add_noise(0.02, self.x + self.dx, self.y + self.dy)
-            if maze.is_free(xx, yy) and self.step_count % 70 != 0:
-                self.x, self.y = xx, yy
+            if self.advance_by(*add_little_noise(self.speed),
+                checker=lambda r, dx, dy: maze.is_free(r.x+dx, r.y+dy)):
                 break
             # Bumped into something or too long in same direction,
             # chose random new direction
@@ -226,7 +234,7 @@ while True:
         p = dist.pick()
         if p is None:  # No pick b/c all totally improbable
             p = Particle.create_random(1)[0]
-        new_particle = Particle(p.x, p.y, noisy=True)
+        new_particle = Particle(p.x, p.y, heading=p.h, noisy=True)
         new_particles.append(new_particle)
 
     particles = new_particles
