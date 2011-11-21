@@ -12,6 +12,7 @@ import random
 
 turtle.tracer(50000, delay=0)
 turtle.register_shape("dot", ((-3,-3), (-3,3), (3,3), (3,-3)))
+turtle.register_shape("tri", ((-3, -2), (0, 3), (3, -2)))
 turtle.speed(0)
 turtle.title("Poor robbie is lost")
 
@@ -86,7 +87,7 @@ class Maze(object):
             return
 
         turtle.clearstamps()
-        turtle.shape('dot')
+        turtle.shape('tri')
 
         px = {}
         for p in particles:
@@ -98,7 +99,7 @@ class Maze(object):
             if not scaled_xy in px:
                 px[scaled_xy] = 1
                 turtle.setposition(*p.xy)
-                turtle.setheading(p.h)
+                turtle.setheading(90 - p.h)
                 turtle.color(self.weight_to_color(p.w))
                 turtle.stamp()
 
@@ -106,7 +107,7 @@ class Maze(object):
         turtle.color("green")
         turtle.shape('turtle')
         turtle.setposition(*robot.xy)
-        turtle.setheading(robot.h)
+        turtle.setheading(90 - robot.h)
         turtle.stamp()
         turtle.update()
 
