@@ -101,9 +101,9 @@ def compute_mean_point(particles):
 class WeightedDistribution(object):
     def __init__(self, state):
         accum = 0.0
-        self.state = state
+        self.state = [p for p in state if p.w > 0]
         self.distribution = []
-        for x in state:
+        for x in self.state:
             accum += x.w
             self.distribution.append(accum)
 
@@ -244,10 +244,11 @@ while True:
     for _ in particles:
         p = dist.pick()
         if p is None:  # No pick b/c all totally improbable
-            p = Particle.create_random(1)[0]
-        new_particle = Particle(p.x, p.y,
-                                heading=robbie.h if ROBOT_HAS_COMPASS else p.h,
-                                noisy=True)
+            new_particle = Particle.create_random(1, world)[0]
+        else:
+            new_particle = Particle(p.x, p.y,
+                    heading=robbie.h if ROBOT_HAS_COMPASS else p.h,
+                    noisy=True)
         new_particles.append(new_particle)
 
     particles = new_particles
