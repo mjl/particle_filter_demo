@@ -17,6 +17,7 @@ turtle.speed(0)
 turtle.title("Poor robbie is lost")
 
 UPDATE_EVERY = 0
+DRAW_EVERY = 2
 
 class Maze(object):
     def __init__(self, maze):
@@ -89,19 +90,22 @@ class Maze(object):
         turtle.clearstamps()
         turtle.shape('tri')
 
+        draw_cnt = 0
         px = {}
         for p in particles:
-            # Keep track of which positions already have something
-            # drawn to speed up display rendering
-            scaled_x = int(p.x * self.one_px)
-            scaled_y = int(p.y * self.one_px)
-            scaled_xy = scaled_x * 10000 + scaled_y
-            if not scaled_xy in px:
-                px[scaled_xy] = 1
-                turtle.setposition(*p.xy)
-                turtle.setheading(90 - p.h)
-                turtle.color(self.weight_to_color(p.w))
-                turtle.stamp()
+            draw_cnt += 1
+            if DRAW_EVERY > 0 and draw_cnt % DRAW_EVERY == 1:
+                # Keep track of which positions already have something
+                # drawn to speed up display rendering
+                scaled_x = int(p.x * self.one_px)
+                scaled_y = int(p.y * self.one_px)
+                scaled_xy = scaled_x * 10000 + scaled_y
+                if not scaled_xy in px:
+                    px[scaled_xy] = 1
+                    turtle.setposition(*p.xy)
+                    turtle.setheading(90 - p.h)
+                    turtle.color(self.weight_to_color(p.w))
+                    turtle.stamp()
 
     def show_robot(self, robot):
         turtle.color("green")
