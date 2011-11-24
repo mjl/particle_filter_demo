@@ -94,7 +94,7 @@ class Maze(object):
         px = {}
         for p in particles:
             draw_cnt += 1
-            if DRAW_EVERY > 0 and draw_cnt % DRAW_EVERY == 1:
+            if DRAW_EVERY == 0 or draw_cnt % DRAW_EVERY == 1:
                 # Keep track of which positions already have something
                 # drawn to speed up display rendering
                 scaled_x = int(p.x * self.one_px)
