@@ -44,9 +44,9 @@ PARTICLE_COUNT = 2000    # Total number of particles
 ROBOT_HAS_COMPASS = True # Does the robot know where north is? If so, it
 # makes orientation a lot easier since it knows which direction it is facing.
 # If not -- and that is really fascinating -- the particle filter can work
-# its heading too, it just takes more particles and more time. Try this with
-# 3000+ particles, it obviously needs lots more hypothesis as a particle now
-# has to correctly match not only the position but also the heading.
+# out its heading too, it just takes more particles and more time. Try this
+# with 3000+ particles, it obviously needs lots more hypotheses as a particle
+# now has to correctly match not only the position but also the heading.
 
 # ------------------------------------------------------------------------
 # Some utility functions
@@ -60,7 +60,7 @@ def add_little_noise(*coords):
 def add_some_noise(*coords):
     return add_noise(0.1, *coords)
 
-# This is just a gaussian kernel I pulled out of my hat, to transfor
+# This is just a gaussian kernel I pulled out of my hat, to transform
 # values near to robbie's measurement => 1, further away => 0
 sigma2 = 0.9 ** 2
 def w_gauss(a, b):
